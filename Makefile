@@ -1,6 +1,11 @@
+VERSION = $(shell git rev-parse --short HEAD)
+
 default: container
 
-container: ca-certificates.pem
+build:
+	docker run -v $(CURDIR):/src -e LDFLAGS='-X main.version $(VERSION)' centurylink/golang-builder:latest
+
+container: build ca-certificates.pem
 	docker build -t registry.luzifer.io/rootcastore .
 	docker push registry.luzifer.io/rootcastore
 

@@ -1,4 +1,4 @@
-package main
+package main // import "github.com/Luzifer/rootcastore"
 
 import (
 	"bytes"
@@ -87,7 +87,7 @@ func handleGetStore(res http.ResponseWriter, r *http.Request) {
 		}
 
 		http.Redirect(res, r, fmt.Sprintf("/v1/store/%s", latest), http.StatusFound)
-    return
+		return
 	}
 
 	content, ok := getFromCache(version)
