@@ -42,6 +42,9 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/v1/store/{version}", handleGetStore)
+	r.HandleFunc("/v1/healthcheck", func(res http.ResponseWriter, r *http.Request) {
+		http.Error(res, "OK", http.StatusOK)
+	})
 
 	http.ListenAndServe(":3000", r)
 }
