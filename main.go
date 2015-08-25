@@ -18,9 +18,10 @@ import (
 )
 
 var (
-	config       = loadConfig()
-	version      = "dev"
-	s3Connection *s3.S3
+	config             = loadConfig()
+	version            = "dev"
+	s3Connection       *s3.S3
+	latestCertificates []byte
 )
 
 const (
@@ -76,10 +77,22 @@ func refreshFromSource() {
 	}
 
 	saveToCache(strconv.FormatInt(time.Now().UTC().Unix(), 10), certData.Bytes())
+	latestCertificates = certData.Bytes()
 }
 
 func handleGetStore(res http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+
+	if !config.EnableCache {
+		if version != "latest" {
+			http.Error(res, fmt.Sprintf("Did not find version '%s'", version), http.StatusNotFound)
+			return
+		}
+
+		res.Header().Set("Content-Type", "application/x-pem-file")
+		res.Write(latestCertificates)
+		return
+	}
 
 	version = vars["version"]
 	if version == "latest" {
