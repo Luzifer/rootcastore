@@ -1,4 +1,10 @@
 
+0.2.0 / 2015-08-25
+==================
+
+  * Built a version without S3 requirement
+  * Added healthcheck
+
 0.1.0 / 2015-08-25
 ==================
 
