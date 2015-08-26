@@ -1,4 +1,10 @@
 
+0.2.2 / 2015-08-26
+==================
+
+  * Let GoBuilder compile in current version
+  * Fix: Do not shadow variable "version"
+
 0.2.1 / 2015-08-26
 ==================
 
