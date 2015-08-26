@@ -53,6 +53,9 @@ func main() {
 func refreshFromSource() {
 	certData := bytes.NewBuffer([]byte{})
 
+	bo := backoff.NewExponentialBackOff()
+	bo.MaxElapsedTime = time.Minute
+
 	err := backoff.Retry(func() error {
 		src, err := http.Get(certDataSource)
 		if err != nil {
@@ -70,7 +73,7 @@ func refreshFromSource() {
 		cert.OutputTrustedCerts(certData, objects)
 
 		return nil
-	}, backoff.NewExponentialBackOff())
+	}, bo)
 
 	if err != nil {
 		log.Fatal(err)
