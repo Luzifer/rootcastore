@@ -44,7 +44,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/v1/store/{version}", handleGetStore)
 	r.HandleFunc("/v1/healthcheck", func(res http.ResponseWriter, r *http.Request) {
-		http.Error(res, "OK", http.StatusOK)
+		http.Error(res, fmt.Sprintf("rootcastore version %s: OK", version), http.StatusOK)
 	})
 
 	http.ListenAndServe(":3000", r)
@@ -87,8 +87,8 @@ func handleGetStore(res http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	if !config.EnableCache {
-		if version != "latest" {
-			http.Error(res, fmt.Sprintf("Did not find version '%s'", version), http.StatusNotFound)
+		if vars["version"] != "latest" {
+			http.Error(res, fmt.Sprintf("Did not find version '%s'", vars["version"]), http.StatusNotFound)
 			return
 		}
 
@@ -97,11 +97,10 @@ func handleGetStore(res http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	version = vars["version"]
-	if version == "latest" {
+	if vars["version"] == "latest" {
 		latest := getLatestVersion()
 		if latest == "" {
-			http.Error(res, fmt.Sprintf("Did not find version '%s'", version), http.StatusNotFound)
+			http.Error(res, fmt.Sprintf("Did not find version '%s'", vars["version"]), http.StatusNotFound)
 			return
 		}
 
@@ -109,10 +108,10 @@ func handleGetStore(res http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	content, ok := getFromCache(version)
+	content, ok := getFromCache(vars["version"])
 
 	if !ok {
-		http.Error(res, fmt.Sprintf("Did not find version '%s'", version), http.StatusNotFound)
+		http.Error(res, fmt.Sprintf("Did not find version '%s'", vars["version"]), http.StatusNotFound)
 		return
 	}
 
